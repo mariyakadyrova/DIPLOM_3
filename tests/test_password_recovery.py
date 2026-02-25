@@ -6,7 +6,7 @@ from pages.reset_password_page import ResetPasswordPage
 from selenium.webdriver.support.ui import WebDriverWait
 
 
-@allure.feature("Password recovery")
+@allure.title("восстановление пароля")
 class TestPasswordRecovery:
 
     @allure.title("Переход на страницу восстановления пароля по кнопке 'Восстановить пароль'")

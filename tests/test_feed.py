@@ -6,8 +6,10 @@ from locators.feed_locators import OrderHistoryLocators
 
 
 @allure.feature("Feed")
+@allure.title("функционал на стр создания заказа)
 class TestFeed:
 
+    @allure.title("открытие модалки созданного заказа")
     def test_order_modal_opens(self, driver, base_url):
         feed = FeedPage(driver, base_url)
         feed.open_feed()
@@ -41,6 +43,7 @@ class TestFeed:
         feed_number = f"#{order_number.zfill(7)}"  # "#0353921"
         assert feed.wait_order_present(feed_number)
 
+    @allure.title("каунтер повысился после добавления нового заказа")
     def test_done_counters_increase_after_new_order(self, driver, base_url, auth_user):
         feed = FeedPage(driver, base_url)
         feed.open_feed()
@@ -62,6 +65,7 @@ class TestFeed:
         assert feed.get_done_all_time() >= all_before
         assert feed.get_done_today() >= today_before
 
+    @allure.title("в блоке В работе появился новый заказ")
     def test_new_order_number_appears_in_in_work(self, driver, base_url, auth_user):
         main = MainPage(driver, base_url)
         main.open_main()
