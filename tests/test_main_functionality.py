@@ -40,16 +40,9 @@ class TestMainFunctionality:
     def test_counter_increases_when_add_ingredient(self, driver, base_url):
         main = MainPage(driver, base_url)
         main.open_main()
-
         main.drag_first_ingredient_to_constructor()
 
-        # ждём появления хотя бы одного каунтера
-        WebDriverWait(driver, 10).until(
-            lambda d: len(d.find_elements(*MainPageLocators.INGREDIENT_COUNTER)) > 0
-        )
-
-        counters = driver.find_elements(*MainPageLocators.INGREDIENT_COUNTER)
-        assert any(int(c.text) >= 1 for c in counters if c.text.isdigit())
+        assert main.wait_and_get_ingredient_counter() >= 1
 
     def test_authorized_user_can_place_order(self, driver, base_url, auth_user):
         main = MainPage(driver, base_url)

@@ -49,6 +49,21 @@ class FeedPage(BasePage):
 
     @allure.step("Проверить, что заказ с номером есть в ленте")
     def is_order_present(self, feed_number: str) -> bool:
-        locator = (By.XPATH, f"//p[contains(@class,'text_type_digits-default') and normalize-space()='{feed_number}']")
+        locator = (FeedLocators.ORDER_NUMBER_BY_TEXT[0],
+                   FeedLocators.ORDER_NUMBER_BY_TEXT[1].format(number=feed_number))
         self.visible(locator)
+        return True
+    @allure.step("Дождаться, что заказ с номером появился в ленте")
+    def wait_order_present(self, feed_number: str, timeout: int = 10) -> bool:
+        WebDriverWait(self.driver, timeout).until(lambda d: self.is_order_present(feed_number))
+        return True
+
+    @allure.step("Дождаться, что счётчик Выполнено за всё время >= {expected}")
+    def wait_done_all_time_at_least(self, expected: int, timeout: int = 10) -> bool:
+        WebDriverWait(self.driver, timeout).until(lambda d: self.get_done_all_time() >= expected)
+        return True
+
+    @allure.step("Дождаться, что счётчик Выполнено сегодня >= {expected}")
+    def wait_done_today_at_least(self, expected: int, timeout: int = 10) -> bool:
+        WebDriverWait(self.driver, timeout).until(lambda d: self.get_done_today() >= expected)
         return True

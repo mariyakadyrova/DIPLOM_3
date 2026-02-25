@@ -1,9 +1,8 @@
 import allure
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.common.by import By
 from pages.main_page import MainPage
 from pages.feed_page import FeedPage
 from pages.profile_page import ProfilePage
+from locators.feed_locators import OrderHistoryLocators
 
 
 @allure.feature("Feed")
@@ -22,8 +21,7 @@ class TestFeed:
         main.drag_first_ingredient_to_constructor()
         main.place_order()
 
-        # номер из модалки создания заказа (у тебя в get_order_number уже есть ожидание != 9999)
-        order_number = main.get_order_number()  # например "353921"
+        order_number = main.get_order_number()  # "353921"
         main.close_modal()
 
         # 2) идём в личный кабинет -> история заказов
@@ -31,24 +29,18 @@ class TestFeed:
         profile = ProfilePage(driver, base_url)
         profile.go_to_order_history()
 
-        # номер из истории (сейчас лучше тоже возвращать str(int(...)) внутри метода)
-        history_number = profile.get_first_order_number()  # например "353921"
-
-        # сравниваем одинаковый формат
+        history_number = profile.get_first_order_number()
         assert history_number == order_number
 
         # 3) проверяем, что этот заказ есть в ленте
         feed = FeedPage(driver, base_url)
-        feed.open_feed()  # <-- ВОТ СЮДА ПИШЕТСЯ open_feed(): после создания feed-страницы
+        feed.open_feed()
 
-        # дождаться, что лента прогрузилась (появился хоть один номер заказа вида "#...")
-        feed.visible(
-            (By.XPATH, "//p[contains(@class,'text_type_digits-default') and starts-with(normalize-space(.),'#')]"))
+        assert feed.visible(OrderHistoryLocators.FIRST_ORDER_NUMBER)
 
-        # в ленте номер обычно в виде "#0xxxxxx" (пример: "#0353921")
-        feed_number = f"#0{order_number.zfill(6)}"
+        feed_number = f"#{order_number.zfill(7)}"  # "#0353921"
+        assert feed.wait_order_present(feed_number)
 
-        assert feed_number in driver.page_source
     def test_done_counters_increase_after_new_order(self, driver, base_url, auth_user):
         feed = FeedPage(driver, base_url)
         feed.open_feed()
@@ -64,8 +56,8 @@ class TestFeed:
 
         # возвращаемся в ленту и ждём роста счётчиков
         feed.open_feed()
-        WebDriverWait(driver, 10).until(lambda d: feed.get_done_all_time() >= all_before)
-        WebDriverWait(driver, 10).until(lambda d: feed.get_done_today() >= today_before)
+        assert feed.wait_done_all_time_at_least(all_before)
+        assert feed.wait_done_today_at_least(today_before)
 
         assert feed.get_done_all_time() >= all_before
         assert feed.get_done_today() >= today_before
@@ -81,8 +73,8 @@ class TestFeed:
         feed = FeedPage(driver, base_url)
         feed.open_feed()
 
-        # ждём, что номер появится в "В работе" (иногда быстро уходит в "Готовы", поэтому ждём немного)
-        WebDriverWait(driver, 10).until(lambda d: feed.is_order_in_work(order_number) or feed.is_order_ready(order_number))
+        # ждём, что заказ появится в "В работе" (или быстро уйдет в "Готовы")
+        assert feed.wait_order_in_work_or_ready(order_number)
 
-        # строго по ТЗ — проверяем "В работе"
+        # проверяем "В работе"
         assert feed.is_order_in_work(order_number) or feed.is_order_ready(order_number)

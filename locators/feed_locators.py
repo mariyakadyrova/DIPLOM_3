@@ -8,6 +8,7 @@ class FeedLocators:
 
     IN_WORK_LIST_ITEMS = (By.CSS_SELECTOR, 'ul.OrderFeed_orderListReady__1YFem li')
     READY_LIST_ITEMS = (By.CSS_SELECTOR, 'ul.OrderFeed_orderList__cBvyi li')
+    ORDER_NUMBER_BY_TEXT = (By.XPATH, "//p[contains(@class,'text_type_digits-default') and normalize-space()='{number}']")
 
 
 class OrderHistoryLocators:

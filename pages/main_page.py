@@ -48,10 +48,13 @@ class MainPage(BasePage):
         except WebDriverException:
             pass
 
-    @allure.step("Получить каунтер ингредиента (если есть)")
-    def get_ingredient_counter_text_or_none(self):
-        els = self.driver.find_elements(*MainPageLocators.INGREDIENT_COUNTER)
-        return els[0].text if els else None
+    @allure.step("Дождаться и получить значение каунтера ингредиента")
+    def wait_and_get_ingredient_counter(self, timeout: int = 10) -> int:
+        WebDriverWait(self.driver, timeout).until(
+            lambda d: len(d.find_elements(*MainPageLocators.INGREDIENT_COUNTER)) > 0
+        )
+        text = self.driver.find_elements(*MainPageLocators.INGREDIENT_COUNTER)[0].text.strip()
+        return int(text) if text.isdigit() else 0
 
     @allure.step("Оформить заказ")
     def place_order(self):
