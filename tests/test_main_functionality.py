@@ -28,16 +28,14 @@ class TestMainFunctionality:
         main = MainPage(driver, base_url)
         main.open_main()
         main.open_ingredient_details()
-        assert True
+        assert main.visible(IngredientModalLocators.TITLE)
 
     def test_ingredient_modal_closes_by_cross(self, driver, base_url):
         main = MainPage(driver, base_url)
         main.open_main()
         main.open_ingredient_details()
         main.close_modal()
-        # модалка исчезла -> заголовка нет
-        main.not_visible(IngredientModalLocators.TITLE)
-        assert True
+        assert main.not_visible(IngredientModalLocators.TITLE)
 
     def test_counter_increases_when_add_ingredient(self, driver, base_url):
         main = MainPage(driver, base_url)

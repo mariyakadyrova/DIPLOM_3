@@ -67,3 +67,9 @@ class MainPage(BasePage):
         # убираем ведущие нули
         return str(int(raw))
 
+    @allure.step("Закрыть модалку ингредиента крестиком")
+    def close_ingredient_modal(self) -> bool:
+        self.close_modal()
+        self.not_visible(IngredientModalLocators.TITLE)
+        return True
+

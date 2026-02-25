@@ -12,8 +12,7 @@ class TestFeed:
     def test_order_modal_opens(self, driver, base_url):
         feed = FeedPage(driver, base_url)
         feed.open_feed()
-        feed.open_first_order()
-        assert True
+        assert feed.open_first_order()
 
     @allure.title("Заказ из истории отображается в ленте заказов")
     def test_orders_from_history_visible_in_feed(self, driver, base_url, auth_user):

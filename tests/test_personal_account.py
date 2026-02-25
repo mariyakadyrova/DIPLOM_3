@@ -16,7 +16,6 @@ class TestPersonalAccount:
 
         profile = ProfilePage(driver, base_url)
         profile.assert_profile_opened()
-        assert True
 
     def test_go_to_order_history(self, driver, base_url, auth_user):
         main = MainPage(driver, base_url)
@@ -26,7 +25,6 @@ class TestPersonalAccount:
         profile = ProfilePage(driver, base_url)
         profile.go_to_order_history()
         profile.assert_history_opened()
-        assert True
 
     def test_logout(self, driver, base_url, auth_user):
         main = MainPage(driver, base_url)
