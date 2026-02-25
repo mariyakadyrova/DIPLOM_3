@@ -6,7 +6,7 @@ from locators.feed_locators import OrderHistoryLocators
 
 
 @allure.feature("Feed")
-@allure.title("функционал на стр создания заказа)
+@allure.title("функционал на стр создания заказа")
 class TestFeed:
 
     @allure.title("открытие модалки созданного заказа")
